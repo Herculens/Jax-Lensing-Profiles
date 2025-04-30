@@ -38,3 +38,37 @@ from herculens.MassModel.mass_model_base import SUPPORTED_MODELS as SUPPORTED_MA
 print(SUPPORTED_LIGHT_MODELS)
 print(SUPPORTED_MASS_MODELS)
 ```
+
+## Defining new MGE profiles
+
+If you want to use the multi-Gaussian-expansion class to create new mass profiles you will need the following:
+- The radial profile for the convergence
+- A subclass of the `MassModel.Profiles.MGE` class that overrides the `__init__` method to call the `MGE.__init__` with your target function
+
+As and example this is the NFWEllipseKappa profile written in this way:
+
+```python
+import jax.numpy as jnp
+
+from .MGE_jax import MGE
+from jax_lensing_profiles.Utility.f_function_jax import J
+
+
+def NFW_fn(r, Rs, kappa_s, **_):
+    x = r / Rs
+    return 2 * kappa_s * J(x)
+
+
+class NFWEllipseKappa(MGE):
+    def __init__(self):
+        super().__init__(
+            NFW_fn,
+            'Rs',
+            n_gauss=20,
+            n_terms=28,
+            sigma_start_mult=1/500,
+            sigma_end_mult=20
+        )
+```
+
+See `MassModel.Profiles.MGE` documentation for more details on the input parameters.
