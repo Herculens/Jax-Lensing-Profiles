@@ -1,3 +1,17 @@
+"""This module defines ``class GaussianKappa`` to compute the lensing properties
+of a Gaussian profile in the convergence using the formulae from Shajib (2019).
+This is a JAX conversion of the Lenstronomy module.
+
+Original author ajshajib.
+
+Jax conversion author CKrawczyk.
+
+Copyright (c) 2025, herculens developers and contributors
+Copyright (c) 2018, Simon Birrer & lenstronomy contributors
+"""
+
+__author__ = "ajshajib", "CKrawczyk"
+
 import jax.numpy as jnp
 
 

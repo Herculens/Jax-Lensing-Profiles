@@ -1,8 +1,11 @@
-# Defines a gaussian profile
-# 
-# Copyright (c) 2021, herculens developers and contributors
-# Copyright (c) 2018, Simon Birrer & lenstronomy contributors
-# based on the LightModel.Profiles module from lenstronomy (version 1.9.3)
+"""This module defines Multi-Gaussian light profiles to compute the light
+coming from a set of either circular or elliptical Gaussian profiles.  This
+is a vectorized version of the single Gaussian light profile as defined in
+Herculens.  That profile is based on the Lenstronomy implementation.
+
+Copyright (c) 2025, herculens developers and contributors
+Copyright (c) 2018, Simon Birrer & lenstronomy contributors
+"""
 
 __author__ = 'sibirrer', 'austinpeel', 'aymgal', 'ckrawczyk'
 

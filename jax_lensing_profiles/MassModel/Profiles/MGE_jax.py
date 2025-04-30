@@ -1,4 +1,16 @@
-__author__ = "CKrawczyk"
+"""This module defines ``class MGE`` to compute the lensing properties any radial convergence
+profile with ellipticity using Gaussian decomposition as defined in Shajib (2019).
+This is a JAX conversion inspired by the Lenstronomy module.
+
+Original author ajshajib.
+
+Jax conversion author CKrawczyk.
+
+Copyright (c) 2025, herculens developers and contributors
+Copyright (c) 2018, Simon Birrer & lenstronomy contributors
+"""
+
+__author__ = "ajshajib", "CKrawczyk"
 
 import jax
 import jax.numpy as jnp

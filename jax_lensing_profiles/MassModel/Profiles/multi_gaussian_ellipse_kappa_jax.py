@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module defines ``class MultiGaussianEllipseKappa`` to compute the lensing properties
 of a set of  elliptical Gaussian profiles with ellipticity in the convergence using the formulae
 from Shajib (2019).  This is a JAX conversion and modification of the Lenstronomy module
@@ -6,9 +5,12 @@ from Shajib (2019).  This is a JAX conversion and modification of the Lenstronom
 Original author ajshajib.
 
 Jax conversion author CKrawczyk.
+
+Copyright (c) 2025, herculens developers and contributors
+Copyright (c) 2018, Simon Birrer & lenstronomy contributors
 """
 
-__author__ = "CKrawczyk"
+__author__ = "ajshajib", "CKrawczyk"
 
 import jax
 import jax.numpy as jnp
