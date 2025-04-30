@@ -15,6 +15,8 @@ While these profiles were originally designed for use with [Herculens](https://g
 - `MGE_jax.MGE`: A multi-gaussian-expansion of a given radial convergence profile
 - `NFW.NFW`: circular NFW profile
 - `NFW.TNFW`: circular Truncated NFW profile
+- `NFW_ellipse_kappa_jax.NFWEllipseKappa`: Elliptical NFW convergence profile
+- `Sersic_ellipse_kappa_jax.SersicEllipseKappa`: Elliptical Sersic convergence profile
 
 ## Installation
 
