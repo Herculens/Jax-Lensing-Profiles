@@ -24,11 +24,13 @@ def sersic_fn(r, mass_to_light_ratio, intensity, effective_radius, sersic_index,
     return mass_to_light_ratio * intensity * jnp.exp(-b * (r_ - 1.0))
 
 
-SersicEllipseKappa = MGE(
-    sersic_fn,
-    'effective_radius',
-    n_gauss=20,
-    n_terms=28,
-    sigma_start_mult=1/100,
-    sigma_end_mult=20
-)
+class SersicEllipseKappa(MGE):
+    def __init__(self):
+        super().__init__(
+            sersic_fn,
+            'effective_radius',
+            n_gauss=20,
+            n_terms=28,
+            sigma_start_mult=1/100,
+            sigma_end_mult=20
+        )

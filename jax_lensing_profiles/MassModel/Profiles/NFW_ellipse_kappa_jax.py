@@ -13,11 +13,13 @@ def NFW_fn(r, Rs, kappa_s, **_):
     return 2 * kappa_s * J(x)
 
 
-NFWEllipseKappa = MGE(
-    NFW_fn,
-    'Rs',
-    n_gauss=20,
-    n_terms=28,
-    sigma_start_mult=1/500,
-    sigma_end_mult=20
-)
+class NFWEllipseKappa(MGE):
+    def __init__(self):
+        super().__init__(
+            NFW_fn,
+            'Rs',
+            n_gauss=20,
+            n_terms=28,
+            sigma_start_mult=1/500,
+            sigma_end_mult=20
+        )
