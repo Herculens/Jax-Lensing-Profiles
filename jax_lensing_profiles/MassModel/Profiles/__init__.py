@@ -4,4 +4,5 @@ from .MGE_jax import MGE
 from .multi_gaussian_ellipse_kappa_jax import MultiGaussianEllipseKappa
 from .NFW import NFW
 from .NFW import TNFW
+from .NFW_ellipse_kappa_jax import NFWEllipseKappa
 from .Sersic import SersicEllipseKappa

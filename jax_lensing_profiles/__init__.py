@@ -22,5 +22,6 @@ mass_model_base.STRING_MAPPING['MULTI_GAUSSIAN_ELLIPSE_KAPPA'] = MassModel.Profi
 mass_model_base.STRING_MAPPING['MGE'] = MassModel.Profiles.MGE
 mass_model_base.STRING_MAPPING['NFW'] = MassModel.Profiles.NFW
 mass_model_base.STRING_MAPPING['TNFW'] = MassModel.Profiles.TNFW
+mass_model_base.STRING_MAPPING['NFW_ELLIPSE_KAPPA'] = MassModel.Profiles.NFWEllipseKappa
 mass_model_base.STRING_MAPPING['SERSIC_ELLIPSE_KAPPA'] = MassModel.Profiles.SersicEllipseKappa
 mass_model_base.SUPPORTED_MODELS = list(mass_model_base.STRING_MAPPING.keys())
