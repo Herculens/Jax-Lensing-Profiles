@@ -4,7 +4,7 @@ The conventions of Keeton (2002, https://arxiv.org/pdf/astro-ph/0102341)
 are used.
 """
 
-__author__ = "WolfganEnzi", "CKrawczyk"
+__author__ = "WolfgangEnzi", "CKrawczyk"
 
 import jax.numpy as jnp
 

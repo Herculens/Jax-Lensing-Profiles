@@ -7,7 +7,7 @@ Baltz et al. (2008, https://arxiv.org/pdf/0705.0682)
 Oguri et al. (2011, https://arxiv.org/pdf/1101.0650)
 """
 
-__author__ = "WolfganEnzi", "CKrawczyk"
+__author__ = "WolfgangEnzi", "CKrawczyk"
 
 import jax.numpy as jnp
 import jax
