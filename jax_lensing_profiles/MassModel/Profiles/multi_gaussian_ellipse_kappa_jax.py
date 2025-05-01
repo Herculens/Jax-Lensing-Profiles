@@ -93,6 +93,33 @@ class MultiGaussianEllipseKappa(object):
         ).sum()
 
     def function(self, x, y, amp, sigma, e1, e2, center_x, center_y):
+        '''Potential values for a mass made up of a set of profiles with elliptical Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : jax.numpy.array
+            array of amplitudes, such that 2D integral leads to this value, one for
+            each Gaussian
+        sigma : jax.numpy.array
+            array of sigmas of each Gaussian, one for each Gaussian
+        e1 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        e2 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        center_x : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+        center_y : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+
+        Returns
+        -------
+        jax.numpy.array
+            Potential values for a mass made up of a set of profiles with elliptical Gaussian convergence
+        '''
         part = partial(
             MultiGaussianEllipseKappa._v1_function,
             amp=amp,
@@ -179,6 +206,33 @@ class MultiGaussianEllipseKappa(object):
         return jnp.stack([f_x, f_y])
     
     def derivatives(self, x, y, amp, sigma, e1, e2, center_x, center_y):
+        '''Deflection angles for a mass made up of a set of profiles with elliptical Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : jax.numpy.array
+            array of amplitudes, such that 2D integral leads to this value, one for
+            each Gaussian
+        sigma : jax.numpy.array
+            array of sigmas of each Gaussian, one for each Gaussian
+        e1 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        e2 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        center_x : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+        center_y : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+
+        Returns
+        -------
+        jax.numpy.array
+            Deflection angles for a mass made up of a set of profiles with elliptical Gaussian convergence
+        '''
         part = partial(
             self._derivatives,
             amp=amp,
@@ -201,6 +255,35 @@ class MultiGaussianEllipseKappa(object):
         )(x, y, amp, sigma, e1, e2, center_x=center_x, center_y=center_y))
 
     def hessian(self, x, y, amp, sigma, e1, e2, center_x, center_y):
+        '''Hessian with respect to position for a mass made up of a set of profiles with elliptical
+        Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : jax.numpy.array
+            array of amplitudes, such that 2D integral leads to this value, one for
+            each Gaussian
+        sigma : jax.numpy.array
+            array of sigmas of each Gaussian, one for each Gaussian
+        e1 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        e2 : jax.numpy.array
+            array of eccentricity modulus, one for each Gaussian
+        center_x : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+        center_y : jax.numpy.array
+            array of centers of profiles, one for each Gaussian
+
+        Returns
+        -------
+        jax.numpy.array
+            Hessian with respect to position for a mass made up of a set of profiles with elliptical
+            Gaussian convergence
+        '''
         part = partial(
             self._hessian,
             amp=amp,

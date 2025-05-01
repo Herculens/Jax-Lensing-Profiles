@@ -1,6 +1,7 @@
 """This module defines ``class GaussianEllipseKappa`` to compute the lensing properties
 of an elliptical Gaussian profile with ellipticity in the convergence using the formulae
-from Shajib (2019).  This is a JAX conversion of the Lenstronomy module.
+from Shajib (2019, https://academic.oup.com/mnras/article/488/1/1387/5526256).  This is
+a JAX conversion of the Lenstronomy module.
 
 Original author ajshajib.
 
@@ -24,7 +25,7 @@ class GaussianEllipseKappa(object):
     """This class contains functions to evaluate the derivative and hessian matrix of
     the deflection potential for an elliptical Gaussian convergence.
 
-    The formulae are from Shajib (2019).
+    The formulae are from Shajib (2019, https://academic.oup.com/mnras/article/488/1/1387/5526256).
     """
 
     param_names = ["amp", "sigma", "e1", "e2", "center_x", "center_y"]
@@ -58,6 +59,32 @@ class GaussianEllipseKappa(object):
         return x_, y_, cos_phi, sin_phi
 
     def function(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
+        '''Potential values for a mass with a elliptical Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        e1 : float
+            eccentricity modulus
+        e2 : float
+            eccentricity modulus
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Potential values for a mass with a elliptical Gaussian convergence
+        '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
         # formulae given in Shajib (2019).
@@ -122,6 +149,32 @@ class GaussianEllipseKappa(object):
         )
 
     def derivatives(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
+        '''Deflection angles for a mass with a elliptical Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        e1 : float
+            eccentricity modulus
+        e2 : float
+            eccentricity modulus
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Deflection angles for a mass with a elliptical Gaussian convergence
+        '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
         # formulae given in Shajib (2019).
@@ -158,6 +211,32 @@ class GaussianEllipseKappa(object):
         return f_x, f_y
 
     def hessian(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
+        '''Hessian with respect to position for a mass with a elliptical Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        e1 : float
+            eccentricity modulus
+        e2 : float
+            eccentricity modulus
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Hessian with respect to position for a mass with a elliptical Gaussian convergence
+        '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
         # formulae given in Shajib (2019).

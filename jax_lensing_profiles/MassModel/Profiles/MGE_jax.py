@@ -1,5 +1,6 @@
-"""This module defines ``class MGE`` to compute the lensing properties any radial convergence
-profile with ellipticity using Gaussian decomposition as defined in Shajib (2019).
+"""This module defines Multi-Gaussian Expansion class to compute the lensing properties
+any radial convergence profile with ellipticity using Gaussian decomposition as defined
+in Shajib (2019, https://academic.oup.com/mnras/article/488/1/1387/5526256). 
 This is a JAX conversion inspired by the Lenstronomy module.
 
 Original author ajshajib.
@@ -27,10 +28,35 @@ class MGE(object):
         radial_fn,
         scale_name,
         sigma_start_mult=1/100,
-        sigma_end_mult=20,
+        sigma_end_mult=20.0,
         n_gauss=20,
         n_terms=28
     ):
+        '''Create a Multi-Gaussian Expansion for a radial convergence function
+        following Shajib (2019, https://academic.oup.com/mnras/article/488/1/1387/5526256)
+
+        Parameters
+        ----------
+        radial_fn : function
+            A JAX compatible function for the radial profile for the convergence
+            of the resulting expansion.  The first variable is assumed to be the radius
+            (name does not matter).
+        scale_name : str
+            The name of the variable being used as the size scale parameter (e.g. "
+            effective_radius" or "Rs").
+        sigma_start_mult : float, optional
+            The smallest Gaussian in the expansion will be `sigma_start_mult * scale_name`,
+            by default 1/100
+        sigma_end_mult : float, optional
+            The largest Gaussian in the expansion will be `sigma_end_mult * scale_name`,
+            by default 20
+        n_gauss : int, optional
+            The number of Gaussian's to use in the expansion, by default 20
+        n_terms : int, optional
+            The number of terms used for the inverse transform (called P in Shajib 2019).
+            This value should be set based on what floating-point precision is being used,
+            if using 32-bit set to ~13, if using 64-bit set to ~28, by default 28.
+        '''
         self.radial_fn = radial_fn
         self.n_gauss = n_gauss
         self.scale_name = scale_name
@@ -38,6 +64,7 @@ class MGE(object):
         self.sigma_end_mult = sigma_end_mult
         
         # eq. 6 for fixed nodes and weights
+        # https://academic.oup.com/mnras/article/488/1/1387/5526256
         n = jnp.arange(0, 2 * n_terms + 1)
         self.chi = jnp.sqrt((2 * n_terms * jnp.log(10) / 3) + 2j * jnp.pi * n)
         i = jnp.arange(1, n_terms)
@@ -147,6 +174,31 @@ class MGE(object):
         )
 
     def function(self, x, y, **kwargs):
+        '''Returns the lensing potential for the MGE
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        e1 : float, keyword
+            eccentricity modulus, must be given as a keyword
+        e2 : float, keyword
+            eccentricity modulus, must be given as a keyword
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kwargs : keywords
+            A set of keywords containing all variables for the radial_fn that are
+            not "radius"
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns the lensing potential for the MGE at each coordinate
+        '''
         # vectorize over x and y
         amps, sigmas = self.decompose(**kwargs)
         return jnp.vectorize(
@@ -217,6 +269,31 @@ class MGE(object):
         return jnp.stack([f_x, f_y])
     
     def derivatives(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
+        '''Deflection angles of the MGE
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        e1 : float, keyword
+            eccentricity modulus
+        e2 : float, keyword
+            eccentricity modulus
+        center_x : float, optional
+            center of the profile, by default 0
+        center_y : float, optional
+            center of the profile, by default 0
+        kwargs : keywords
+            A set of keywords containing all variables for the radial_fn that are
+            not "radius"
+
+        Returns
+        -------
+        jax.numpy.array
+            Deflection angles of the MGE
+        '''
         part = partial(
             self._derivatives,
             e1=e1,
@@ -238,6 +315,31 @@ class MGE(object):
         )(x, y, e1, e2, center_x=center_x, center_y=center_y, **kwargs))
     
     def hessian(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
+        '''Hessian with respect to position of the MGE
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        e1 : float, keyword
+            eccentricity modulus
+        e2 : float, keyword
+            eccentricity modulus
+        center_x : float, optional
+            center of the profile, by default 0
+        center_y : float, optional
+            center of the profile, by default 0
+        kwargs : keywords
+            A set of keywords containing all variables for the radial_fn that are
+            not "radius"
+
+        Returns
+        -------
+        jax.numpy.array
+            Hessian with respect to position of the MGE
+        '''
         part = partial(
             self._hessian,
             e1=e1,

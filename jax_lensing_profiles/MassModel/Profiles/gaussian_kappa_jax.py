@@ -100,7 +100,28 @@ class GaussianKappa(object):
         return alpha
 
     def function(self, x, y, amp, sigma, center_x=0, center_y=0):
-        """Returns Gaussian."""
+        '''Potential values for a mass with a circular Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Potential values for a mass with a circular Gaussian convergence
+        '''
         _, _, R = GaussianKappa.center(x, y, center_x, center_y)
         c = 1.0 / (2 * sigma**2)
         value = c * R**2
@@ -111,6 +132,28 @@ class GaussianKappa(object):
         return integral_term * amp2d
 
     def derivatives(self, x, y, amp, sigma, center_x=0, center_y=0):
+        '''Deflection angles for a mass with a circular Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Deflection angles for a mass with a circular Gaussian convergence
+        '''
         xc, yc, R = GaussianKappa.center(x, y, center_x, center_y)
         alpha = GaussianKappa.alpha_abs(R, amp, sigma)
         return alpha / R * xc, alpha / R * yc
@@ -132,6 +175,28 @@ class GaussianKappa(object):
         return 1.0 / R**2 * (-1 + (1 + 2 * c * R**2) * jnp.exp(-c * R**2)) * A
 
     def hessian(self, x, y, amp, sigma, center_x=0, center_y=0):
+        '''Hessian with respect to position for a mass with a circular Gaussian convergence.
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        amp : float
+            amplitudes, such that 2D integral leads to this value
+        sigma : float
+            sigma of Gaussian
+        center_x : float, optional
+            center of profile, defaults to 0
+        center_y : float, optional
+            center of profile, defaults to 0
+
+        Returns
+        -------
+        jax.numpy.array
+            Hessian with respect to position for a mass with a circular Gaussian convergence
+        '''
         xc, yc, R = GaussianKappa.center(x, y, center_x, center_y)
         alpha = GaussianKappa.alpha_abs(R, amp, sigma)
         d_alpha_dr = -GaussianKappa.d_alpha_dr(R, amp, sigma, sigma)
