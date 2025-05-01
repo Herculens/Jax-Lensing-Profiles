@@ -4,7 +4,10 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "jax_lensing_profiles"
-authors = [{name = "Coleman Krawczyk", email = "coleman.krawczyk@port.ac.uk"}]
+authors = [
+    {name = "Coleman Krawczyk", email = "coleman.krawczyk@port.ac.uk"},
+    {name = "Wolfgang Enzi", email = "wolfgang.enzi@port.ac.uk"}
+]
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
