@@ -1,3 +1,7 @@
+'''Faddeeva function written in JAX.  Used for defining mass profiles with
+elliptical Gaussian convergence and MGEs.'''
+
+
 import jax.numpy as jnp
 
 from jax import custom_jvp
@@ -49,14 +53,22 @@ def reg3(z, sqrt_pi, _):
 
 @custom_jvp
 def w_f(z):
-    """Compute the Faddeeva function :math:`w_{\\mathrm F}(z)` using the
-    approximation given in Zaghloul (2017).
+    '''Compute the Faddeeva function :math:`w_{\\mathrm F}(z)` using the
+    approximation given in Zaghloul (2017, https://dl.acm.org/doi/pdf/10.1145/3119904).
 
-    :param z: complex number
-    :type z: ``complex`` or ``numpy.array(dtype=complex)``
-    :return: :math:`w_\\mathrm{F}(z)`
-    :rtype: ``complex``
-    """
+    In order to have the higher order derivatives accurate when using auto-differentiation
+    in JAX, we keep more terms than typical in the expansion used for region 1 (large z values).
+
+    Parameters
+    ----------
+    z : complex
+        complex number
+
+    Returns
+    -------
+    complex
+        the Faddeeva function at the input value
+    '''
     sqrt_pi = 1 / jnp.sqrt(jnp.pi)
     i_sqrt_pi = 1j * sqrt_pi
 

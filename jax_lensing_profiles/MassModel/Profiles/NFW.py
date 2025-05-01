@@ -1,13 +1,20 @@
+"""This module defines a mass profile where the convergence follows 
+and circular NFW profile or truncated-NFW function.  The conventions
+of Keeton (2002, https://arxiv.org/pdf/astro-ph/0102341) are used.
+
+Other references used:
+Baltz et al. (2008, https://arxiv.org/pdf/0705.0682)
+Oguri et al. (2011, https://arxiv.org/pdf/1101.0650)
+"""
+
+__author__ = "WolfganEnzi", "CKrawczyk"
+
 import jax.numpy as jnp
 import jax
 
 from jax_lensing_profiles.Utility.f_function_jax import F, H
 from jax.tree_util import Partial as partial
 
-# References:
-# https://arxiv.org/pdf/0705.0682.pdf
-# https://arxiv.org/pdf/1101.0650.pdf
-# https://arxiv.org/pdf/astro-ph/0102341
 
 # ============================================================================================
 # Base class for NFW and tNFW
@@ -32,7 +39,7 @@ class NFWBase(object):
 
     def function(self, x, y, *args, **kwargs):
         """
-        returns TNFW lens potential
+        returns NFW lens potential
         """
         return self.__class__.psi(x, y, *args, **kwargs)
 
@@ -42,8 +49,6 @@ class NFWBase(object):
         '''
         # use jnp.vectorized rather than jax.vmap so that all
         # dimensions of `x` and `y` are treated as batch dimensions
-        # exclude up to `7` to account for the max number of params
-        # between NFW and tNFW
         grad_vec = jnp.vectorize(
             self.__class__.part_grad_stack(*args, **kwargs),
             signature='(),()->(i)'
@@ -56,8 +61,6 @@ class NFWBase(object):
         '''
         # use jnp.vectorized rather than jax.vmap so that all
         # dimensions of `x` and `y` are treated as batch dimensions
-        # exclude up to `7` to account for the max number of params
-        # between NFW and tNFW
         h = jnp.vectorize(
             self.__class__.part_hessian_stack(*args, **kwargs),
             signature='(),()->(i,i)'
@@ -71,35 +74,35 @@ class NFWBase(object):
 
 class NFW(NFWBase):
     '''
-    this class contains function to evaluate the NFW derivatives
+    This class contains function to evaluate the NFW derivatives
     '''
-    param_names = ['ks', 'rs', 'center_x', 'center_y']
-    lower_limit_default = {'ks': 1e-5, 'rs': 1e-5, 'center_x': -5, 'center_y': -5}
-    upper_limit_default = {'ks': 1e+5, 'rs': 1e+5, 'center_x': 5, 'center_y': 5}
+    param_names = ['kappa_s', 'R_s', 'center_x', 'center_y']
+    lower_limit_default = {'kappa_s': 1e-5, 'R_s': 1e-5, 'center_x': -5, 'center_y': -5}
+    upper_limit_default = {'kappa_s': 1e+5, 'R_s': 1e+5, 'center_x': 5, 'center_y': 5}
     fixed_default = {key: False for key in param_names}
 
     @staticmethod
-    def center_and_scale(x, y, rs, center_x, center_y):
+    def center_and_scale(x, y, R_s, center_x, center_y):
         xc = x - center_x
         yc = y - center_y
         norm = xc**2 + yc**2
         # add epsilon to the norm to prevent `nan` derivatives
         # jax requires this to be *inside* the sqrt to work with jax.grad
         r = jnp.sqrt(norm + 1e-10)
-        xr = r / rs
+        xr = r / R_s
         return xr
 
     @staticmethod
-    def psi(x, y, ks, rs, center_x=0, center_y=0):
+    def psi(x, y, kappa_s, R_s, center_x=0, center_y=0):
         """
-        returns TNFW lens potential
+        returns tNFW lens potential
         """
-        xr = NFW.center_and_scale(x, y, rs, center_x, center_y)
+        xr = NFW.center_and_scale(x, y, R_s, center_x, center_y)
         # Fx = NFW.F(xr)
         # Fx = F(xr)
         # psi = jnp.log(0.5 * xr)**2 - Fx * Fx * (1 - xr**2)
         psi = H(xr) + jnp.log(0.5 * xr)**2
-        return 2.0 * ks * psi * rs**2
+        return 2.0 * kappa_s * psi * R_s**2
 
     @staticmethod
     def grad_stack(x, y, *args, **kwargs):
@@ -108,11 +111,11 @@ class NFW(NFWBase):
         )
 
     @staticmethod
-    def part_grad_stack(ks, rs, center_x=0, center_y=0):
+    def part_grad_stack(kappa_s, R_s, center_x=0, center_y=0):
         return partial(
             NFW.grad_stack,
-            ks=ks,
-            rs=rs,
+            kappa_s=kappa_s,
+            R_s=R_s,
             center_x=center_x,
             center_y=center_y
         )
@@ -124,14 +127,90 @@ class NFW(NFWBase):
         )
 
     @staticmethod
-    def part_hessian_stack(ks, rs, center_x=0, center_y=0):
+    def part_hessian_stack(kappa_s, R_s, center_x=0, center_y=0):
         return partial(
             NFW.hessian_stack,
-            ks=ks,
-            rs=rs,
+            kappa_s=kappa_s,
+            R_s=R_s,
             center_x=center_x,
             center_y=center_y
         )
+
+    # "override" these methods just to change the docstring
+    def function(self, x, y, *args, **kwargs):
+        '''Returns the lensing potential for a mass with an circular NFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns the lensing potential for a mass with an circular NFW convergence
+        '''
+        return super().function(x, y, *args, **kwargs)
+
+    def derivatives(self, x, y, *args, **kwargs):
+        '''Returns deflection angles for a mass with an circular NFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns deflection angles for a mass with an circular NFW convergence
+        '''
+        return super().derivatives(x, y, *args, **kwargs)
+    
+    def hessian(self, x, y, *args, **kwargs):
+        '''Returns the hessian with respect to position for a mass with an circular NFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns the hessian with respect to position for a mass with an circular NFW convergence
+        '''
+        return super().hessian(x, y, *args, **kwargs)
 
 
 # ============================================================================================
@@ -141,28 +220,27 @@ class NFW(NFWBase):
 
 class TNFW(NFWBase):
     """
-    this class contains functions to evaluate TNFW derivatives
+    This class contains functions to evaluate tNFW derivatives
     """
-    param_names = ['ks', 'rs', 'rt', 'center_x', 'center_y']
-    lower_limit_default = {'ks': 1e-5, 'rs': 1e-5, 'rt': 1e-5, 'center_x': -5, 'center_y': -5}
-    upper_limit_default = {'ks': 1e+5, 'rs': 1e+5, 'rt': 1e+5, 'center_x': 5, 'center_y': 5}
+    param_names = ['kappa_s', 'R_s', 'R_t', 'center_x', 'center_y']
+    lower_limit_default = {'kappa_s': 1e-5, 'R_s': 1e-5, 'R_t': 1e-5, 'center_x': -5, 'center_y': -5}
+    upper_limit_default = {'kappa_s': 1e+5, 'R_s': 1e+5, 'R_t': 1e+5, 'center_x': 5, 'center_y': 5}
     fixed_default = {key: False for key in param_names}
 
     @staticmethod
-    def center_and_scale(x, y, rs, rt, center_x, center_y):
+    def center_and_scale(x, y, R_s, R_t, center_x, center_y):
         xc = x - center_x
         yc = y - center_y
         norm = xc**2 + yc**2
         # add epsilon to the norm to prevent `nan` derivatives
         # jax requires this to be *inside* the sqrt to work with jax.grad
         r = jnp.sqrt(norm + 1e-12)
-        xr = r / rs
-        tau = rt / rs
+        xr = r / R_s
+        tau = R_t / R_s
         return xr, tau
 
     @staticmethod
     def _psi_truncated_nfw(x, tau):
-        # Fx = TNFW.F(x)
         Fx = F(x)
         x2 = x**2
         tau2 = tau**2
@@ -188,9 +266,9 @@ class TNFW(NFWBase):
         return B * A
 
     @staticmethod
-    def psi(x, y, ks, rs, rt, center_x=0, center_y=0):
-        xr, tau = TNFW.center_and_scale(x, y, rs, rt, center_x, center_y)
-        return 2.0 * ks * TNFW._psi_truncated_nfw(xr, tau) * rs**2
+    def psi(x, y, kappa_s, R_s, R_t, center_x=0, center_y=0):
+        xr, tau = TNFW.center_and_scale(x, y, R_s, R_t, center_x, center_y)
+        return 2.0 * kappa_s * TNFW._psi_truncated_nfw(xr, tau) * R_s**2
 
     @staticmethod
     def grad_stack(x, y, *args, **kwargs):
@@ -199,12 +277,12 @@ class TNFW(NFWBase):
         )
 
     @staticmethod
-    def part_grad_stack(ks, rs, rt, center_x=0, center_y=0):
+    def part_grad_stack(kappa_s, R_s, R_t, center_x=0, center_y=0):
         return partial(
             TNFW.grad_stack,
-            ks=ks,
-            rs=rs,
-            rt=rt,
+            kappa_s=kappa_s,
+            R_s=R_s,
+            R_t=R_t,
             center_x=center_x,
             center_y=center_y
         )
@@ -216,12 +294,94 @@ class TNFW(NFWBase):
         )
 
     @staticmethod
-    def part_hessian_stack(ks, rs, rt, center_x=0, center_y=0):
+    def part_hessian_stack(kappa_s, R_s, R_t, center_x=0, center_y=0):
         return partial(
             TNFW.hessian_stack,
-            ks=ks,
-            rs=rs,
-            rt=rt,
+            kappa_s=kappa_s,
+            R_s=R_s,
+            R_t=R_t,
             center_x=center_x,
             center_y=center_y
         )
+
+    # "override" these methods just to change the docstring
+    def function(self, x, y, *args, **kwargs):
+        '''Returns the lensing potential for a mass with an circular tNFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+        R_t : float, keyword
+            truncation radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns the lensing potential for a mass with an circular tNFW convergence
+        '''
+        return super().function(x, y, *args, **kwargs)
+
+    def derivatives(self, x, y, *args, **kwargs):
+        '''Returns deflection angles for a mass with an circular tNFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+        R_t : float, keyword
+            truncation radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns deflection angles for a mass with an circular tNFW convergence
+        '''
+        return super().derivatives(x, y, *args, **kwargs)
+    
+    def hessian(self, x, y, *args, **kwargs):
+        '''Returns the hessian with respect to position for a mass with an circular tNFW convergence
+
+        Parameters
+        ----------
+        x : jax.numpy.array
+            coordinate on the sky
+        y : jax.numpy.array
+            coordinate on the sky
+        center_x : float, keyword
+            center of the profile, must be given as a keyword
+        center_y : float, keyword
+            center of the profile, must be given as a keyword
+        kappa_s : float, keyword
+            amplitude of the convergence, must be given as a keyword
+        R_s : float, keyword
+            scale radius, must be given as a keyword
+        R_t : float, keyword
+            truncation radius, must be given as a keyword
+
+        Returns
+        -------
+        jax.numpy.array
+            Returns the hessian with respect to position for a mass with an circular tNFW convergence
+        '''
+        return super().hessian(x, y, *args, **kwargs)

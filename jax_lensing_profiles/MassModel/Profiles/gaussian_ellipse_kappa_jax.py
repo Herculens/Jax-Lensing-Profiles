@@ -59,7 +59,7 @@ class GaussianEllipseKappa(object):
         return x_, y_, cos_phi, sin_phi
 
     def function(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
-        '''Potential values for a mass with a elliptical Gaussian convergence.
+        '''Potential values for a mass with an elliptical Gaussian convergence.
 
         Parameters
         ----------
@@ -83,7 +83,7 @@ class GaussianEllipseKappa(object):
         Returns
         -------
         jax.numpy.array
-            Potential values for a mass with a elliptical Gaussian convergence
+            Potential values for a mass with an elliptical Gaussian convergence
         '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
@@ -149,7 +149,7 @@ class GaussianEllipseKappa(object):
         )
 
     def derivatives(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
-        '''Deflection angles for a mass with a elliptical Gaussian convergence.
+        '''Deflection angles for a mass with an elliptical Gaussian convergence.
 
         Parameters
         ----------
@@ -173,7 +173,7 @@ class GaussianEllipseKappa(object):
         Returns
         -------
         jax.numpy.array
-            Deflection angles for a mass with a elliptical Gaussian convergence
+            Deflection angles for a mass with an elliptical Gaussian convergence
         '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
@@ -211,7 +211,7 @@ class GaussianEllipseKappa(object):
         return f_x, f_y
 
     def hessian(self, x, y, amp, sigma, e1, e2, center_x=0, center_y=0):
-        '''Hessian with respect to position for a mass with a elliptical Gaussian convergence.
+        '''Hessian with respect to position for a mass with an elliptical Gaussian convergence.
 
         Parameters
         ----------
@@ -235,7 +235,7 @@ class GaussianEllipseKappa(object):
         Returns
         -------
         jax.numpy.array
-            Hessian with respect to position for a mass with a elliptical Gaussian convergence
+            Hessian with respect to position for a mass with an elliptical Gaussian convergence
         '''
         phi_g, q = param_util.ellipticity2phi_q(e1, e2)
         # adjusting amplitude to make the notation compatible with the
