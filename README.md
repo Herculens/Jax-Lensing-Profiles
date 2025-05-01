@@ -9,14 +9,14 @@ While these profiles were originally designed for use with [Herculens](https://g
 - `multi_gaussian_light.MultiGaussianEllipse`: Sum of multiple (vectorized) elliptical Gaussian profiles
 
 ## Mass Profiles
-- `gaussian_kappa_jax.GaussianKappa`: Single circular Gaussian convergence profile
-- `gaussian_ellipse_kappa_jax.GaussianEllipseKappa`: Single elliptical Gaussian convergence profile
-- `multi_gaussian_ellipse_kappa_jax.MultiGaussianEllipseKappa`: Sum of multiple (vectorized) elliptical Gaussian convergence profiles
-- `MGE_jax.MGE`: A multi-gaussian-expansion of a given radial convergence profile
+- `gaussian_kappa.GaussianKappa`: Single circular Gaussian convergence profile
+- `gaussian_ellipse_kappa.GaussianEllipseKappa`: Single elliptical Gaussian convergence profile
+- `multi_gaussian_ellipse_kappa.MultiGaussianEllipseKappa`: Sum of multiple (vectorized) elliptical Gaussian convergence profiles
+- `MGE.MGE`: A multi-gaussian-expansion of a given radial convergence profile
 - `NFW.NFW`: circular NFW profile
 - `NFW.TNFW`: circular Truncated NFW profile
-- `NFW_ellipse_kappa_jax.NFWEllipseKappa`: Elliptical NFW convergence profile
-- `Sersic_ellipse_kappa_jax.SersicEllipseKappa`: Elliptical Sersic convergence profile
+- `NFW_ellipse_kappa.NFWEllipseKappa`: Elliptical NFW convergence profile
+- `Sersic_ellipse_kappa.SersicEllipseKappa`: Elliptical Sersic convergence profile
 
 ## Installation
 
@@ -56,8 +56,8 @@ from .MGE_jax import MGE
 from jax_lensing_profiles.Utility.f_function_jax import J
 
 
-def NFW_fn(r, Rs, kappa_s, **_):
-    x = r / Rs
+def NFW_fn(r, R_s, kappa_s, **_):
+    x = r / R_s
     return 2 * kappa_s * J(x)
 
 
