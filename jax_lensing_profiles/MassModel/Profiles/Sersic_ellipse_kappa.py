@@ -6,7 +6,7 @@ __author__ = "CKrawczyk"
 
 import jax.numpy as jnp
 
-from .MGE_jax import MGE
+from .MGE import MGE
 
 
 def sersic_constant(sersic_index):

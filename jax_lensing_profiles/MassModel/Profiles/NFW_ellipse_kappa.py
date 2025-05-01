@@ -8,7 +8,7 @@ __author__ = "WolfganEnzi", "CKrawczyk"
 
 import jax.numpy as jnp
 
-from .MGE_jax import MGE
+from .MGE import MGE
 from jax_lensing_profiles.Utility.f_function_jax import J
 
 
