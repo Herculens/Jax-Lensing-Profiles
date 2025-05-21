@@ -11,7 +11,7 @@ Copyright (c) 2025, herculens developers and contributors
 Copyright (c) 2018, Simon Birrer & lenstronomy contributors
 """
 
-__author__ = "ajshajib", "CKrawczyk"
+__author__ = "ajshajib", "CKrawczyk", "astroskylee"
 
 import jax
 import jax.numpy as jnp
@@ -30,7 +30,8 @@ class MGE(object):
         sigma_start_mult=1/100,
         sigma_end_mult=20.0,
         n_gauss=20,
-        n_terms=28
+        n_terms=28,
+        three_d=False
     ):
         '''Create a Multi-Gaussian Expansion for a radial convergence function
         following Shajib (2019, https://academic.oup.com/mnras/article/488/1/1387/5526256)
@@ -38,9 +39,10 @@ class MGE(object):
         Parameters
         ----------
         radial_fn : function
-            A JAX compatible function for the radial profile for the convergence
-            of the resulting expansion.  The first variable is assumed to be the radius
-            (name does not matter).
+            A JAX compatible function for the radial profile for the mass profile divided
+            by the critical surface density.  The first variable is assumed to be the radius
+            (name does not matter).  This can either be a 3D or 2D profile (use the "three_d" 
+            keyword to specify this).
         scale_name : str
             The name of the variable being used as the size scale parameter (e.g. "
             effective_radius" or "Rs").
@@ -56,8 +58,13 @@ class MGE(object):
             The number of terms used for the inverse transform (called P in Shajib 2019).
             This value should be set based on what floating-point precision is being used,
             if using 32-bit set to ~13, if using 64-bit set to ~28, by default 28.
+        three_d : bool, optional
+            Set this keyword to True if the radial profile is for the 3D mass density function,
+            otherwise the radial profile should be for the project 2D mass density function.
+            By default False.
         '''
         self.radial_fn = radial_fn
+        self.three_d = three_d
         self.n_gauss = n_gauss
         self.scale_name = scale_name
         self.sigma_start_mult = sigma_start_mult
@@ -113,7 +120,10 @@ class MGE(object):
             ),
             axis=1
         )
-        amps = self.w * f_eval * d_log_sigma / self.root_two_pi
+        if self.three_d:
+            amps = self.w * f_eval * d_log_sigma * sigmas
+        else:
+            amps = self.w * f_eval * d_log_sigma / self.root_two_pi
         return amps, sigmas
 
     @staticmethod

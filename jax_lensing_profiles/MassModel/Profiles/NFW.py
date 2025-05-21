@@ -151,7 +151,9 @@ class NFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
 
@@ -176,7 +178,9 @@ class NFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
 
@@ -201,7 +205,9 @@ class NFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
 
@@ -319,7 +325,9 @@ class TNFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
         R_t : float, keyword
@@ -346,7 +354,9 @@ class TNFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
         R_t : float, keyword
@@ -373,7 +383,9 @@ class TNFW(NFWBase):
         center_y : float, keyword
             center of the profile, must be given as a keyword
         kappa_s : float, keyword
-            amplitude of the convergence, must be given as a keyword
+            amplitude of the convergence, must be given as a keyword.
+            This is related to the amplitude of the mass profile by
+            rho_s = kappa_s * Critical_Surface_Density / R_s
         R_s : float, keyword
             scale radius, must be given as a keyword
         R_t : float, keyword
