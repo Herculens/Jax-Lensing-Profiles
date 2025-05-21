@@ -11,7 +11,7 @@ Copyright (c) 2025, herculens developers and contributors
 Copyright (c) 2018, Simon Birrer & lenstronomy contributors
 """
 
-__author__ = "ajshajib", "CKrawczyk", "astroskylee"
+__author__ = "ajshajib", "CKrawczyk", "astroskylee", "WolfgangEnzi"
 
 import jax
 import jax.numpy as jnp
