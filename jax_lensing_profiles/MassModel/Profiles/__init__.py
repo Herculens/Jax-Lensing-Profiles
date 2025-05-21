@@ -5,4 +5,7 @@ from .multi_gaussian_ellipse_kappa import MultiGaussianEllipseKappa
 from .NFW import NFW
 from .NFW import TNFW
 from .NFW_ellipse_kappa import NFWEllipseKappa
+from .CuspyNFW_ellipse_kappa import CuspyNFWEllipseKappa
+from .CuspyHalo_ellipse_kappa import CuspyHaloEllipseKappa
+from .TNFW_ellipse_kappa import TNFWEllipseKappa
 from .Sersic_ellipse_kappa import SersicEllipseKappa
