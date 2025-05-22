@@ -316,7 +316,7 @@ class MGE(object):
             part,
             signature='(),()->(i)'
         )(x, y)
-        return f[..., 0], f[..., 1]
+        return f[..., 0].squeeze(), f[..., 1].squeeze()
 
     def _hessian(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
         return jnp.stack(jax.jacfwd(
