@@ -4,7 +4,7 @@ from . import LightModel
 from . import MassModel
 from . import Utility
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 
 # Register the new mass and light profiles with herculens on import
