@@ -130,7 +130,7 @@ class MGE(object):
     def center_and_scale(x, y, center_x, center_y, phi_g):
         x_shift = x - center_x
         y_shift = y - center_y
-        y_shift = jnp.where(y_shift==0, y_shift+1e-20, y_shift)
+        y_shift = jnp.where(y_shift == 0, y_shift + 1e-20, y_shift)
         cos_phi = jnp.cos(phi_g)
         sin_phi = jnp.sin(phi_g)
 
@@ -276,8 +276,8 @@ class MGE(object):
         # rotate back to the original frame
         f_x = alpha_x_ * cos_phi - alpha_y_ * sin_phi
         f_y = alpha_x_ * sin_phi + alpha_y_ * cos_phi
-        return jnp.stack([f_x, f_y])
-    
+        return jnp.stack([f_x, f_y]).squeeze()
+
     def derivatives(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
         '''Deflection angles of the MGE
 
@@ -316,7 +316,7 @@ class MGE(object):
             part,
             signature='(),()->(i)'
         )(x, y)
-        return f[..., 0].squeeze(), f[..., 1].squeeze()
+        return f[..., 0], f[..., 1]
 
     def _hessian(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
         return jnp.stack(jax.jacfwd(
