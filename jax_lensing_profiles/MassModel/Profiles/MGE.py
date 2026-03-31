@@ -17,7 +17,9 @@ import jax
 import jax.numpy as jnp
 import herculens.Util.param_util as param_util
 
-from jax_lensing_profiles.Utility.basic_quad_jax import nth_order_quad_base as quad
+from jax_lensing_profiles.Utility.basic_quad_jax import (
+    log_segmented_nth_order_quad_base as quad,
+)
 from jax_lensing_profiles.Utility.faddeeva_function import w_f
 from functools import partial
 
@@ -235,13 +237,17 @@ class MGE(object):
             MGE.pot_real_line_integrand,
             0, x_,
             args=(_p, q),
-            n=7
+            n=7,
+            segments=8,
+            log_L=3.0,
         )
         pot_on_imag_parallel = quad(
             MGE.pot_imag_line_integrand,
             0, y_,
             args=(x_, _p, q),
-            n=7
+            n=7,
+            segments=8,
+            log_L=3.0,
         )
         return factor * (pot_on_real_line - pot_on_imag_parallel)
 

@@ -49,6 +49,73 @@ def nth_order_quad_base(func, a, b, args=(), kwargs={}, n=21):
 nth_order_quad = jax.jit(nth_order_quad_base, static_argnums=(0, 5))
 
 
+def log_segmented_nth_order_quad_base(
+    func,
+    a,
+    b,
+    args=(),
+    kwargs={},
+    n=21,
+    segments=8,
+    log_L=3.0,
+):
+    '''Nth order Gauss-Legendre quadrature on log-spaced sub-intervals
+
+    Parameters
+    ----------
+    func : function
+        function to integrate
+    a : float
+        lower bound of integration
+    b : float
+        upper bound of integration
+    args : tuple, optional
+        positional arguments of input function, by default ()
+    kwargs : dict, optional
+        keywords of input function, by default {}
+    n : int, optional
+        order of legendre roots to use on each segment, by default 21
+    segments : int, optional
+        number of log-spaced segments, by default 8
+    log_L : float, optional
+        decade span controlling the lower-edge clustering, by default 3.0
+
+    Returns
+    -------
+    float
+        the segmented integration of the input function between `a` and `b`
+    '''
+    roots = jnp.array(roots_legendre(n)).T
+    x_val = roots[:, 0]
+    weights = roots[:, 1]
+
+    u = jnp.logspace(-log_L, 0.0, segments + 1)
+    edges = a + (b - a) * (u - u[0]) / (u[-1] - u[0])
+    left, right = edges[:-1], edges[1:]
+
+    x = 0.5 * ((right - left)[:, None] * x_val[None, :] + (right + left)[:, None])
+    x_flat = x.reshape(-1, 1)
+
+    aux = jnp.apply_along_axis(
+        func,
+        1,
+        x_flat,
+        *args,
+        **kwargs
+    )
+    scale = 0.5 * (right - left)
+    aux = aux.reshape((segments, n) + aux.shape[1:])
+    weighted = jnp.tensordot(aux, weights, axes=([1], [0]))
+    seg_int = weighted * scale.reshape((segments,) + (1,) * (weighted.ndim - 1))
+    return jnp.squeeze(jnp.sum(seg_int, axis=0))
+
+
+log_segmented_nth_order_quad = jax.jit(
+    log_segmented_nth_order_quad_base,
+    static_argnums=(0, 5, 6, 7),
+)
+
+
 @partial(jax.jit, static_argnums=(0, 5))
 def vec_nth_order_quad(func, a, b, args=(), kwargs={}, n=21):
     '''Nth order Gauss-Legendre quadrature vectorized over the bounds
