@@ -78,7 +78,9 @@ def log_segmented_nth_order_quad_base(
     segments : int, optional
         number of log-spaced segments, by default 8
     log_L : float, optional
-        decade span controlling the lower-edge clustering, by default 3.0
+        Starting point of the logarithmic segmentation, e.g. log_L = 3 means
+        the segment edges are built from np.logspace(-3, 0) before rescaling
+        to [a, b], by default 3.0
 
     Returns
     -------
