@@ -8,7 +8,7 @@ __author__ = "WolfgangEnzi", "CKrawczyk", "astroskylee"
 
 import jax.numpy as jnp
 
-from .MGE import MGE
+from .MGE import MGE, N_TERMS
 
 
 def CuspyHalo_3D_fn(r, R_s, kappa_s, gamma, n, **_):
@@ -47,7 +47,7 @@ class CuspyHaloEllipseKappa(MGE):
             CuspyHalo_3D_fn,
             'R_s',
             n_gauss=20,
-            n_terms=28,
+            n_terms=N_TERMS,
             sigma_start_mult=1/500,
             sigma_end_mult=20,
             three_d=True

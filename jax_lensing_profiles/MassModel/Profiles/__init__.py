@@ -9,3 +9,4 @@ from .CuspyNFW_ellipse_kappa import CuspyNFWEllipseKappa
 from .CuspyHalo_ellipse_kappa import CuspyHaloEllipseKappa
 from .TNFW_ellipse_kappa import TNFWEllipseKappa
 from .Sersic_ellipse_kappa import SersicEllipseKappa
+from .dPIE_from_MGE import dPIEEllipseKappa
