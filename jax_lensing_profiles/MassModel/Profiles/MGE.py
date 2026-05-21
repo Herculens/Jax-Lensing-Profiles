@@ -18,7 +18,9 @@ import jax.numpy as jnp
 import herculens.Util.param_util as param_util
 import warnings
 
-from jax_lensing_profiles.Utility.basic_quad_jax import nth_order_quad_base as quad
+from jax_lensing_profiles.Utility.basic_quad_jax import (
+    log_segmented_nth_order_quad_base as quad,
+)
 from jax_lensing_profiles.Utility.faddeeva_function import w_f
 from functools import partial
 
@@ -140,7 +142,7 @@ class MGE(object):
     def center_and_scale(x, y, center_x, center_y, phi_g):
         x_shift = x - center_x
         y_shift = y - center_y
-        y_shift = jnp.where(y_shift==0, y_shift+1e-20, y_shift)
+        y_shift = jnp.where(y_shift == 0, y_shift + 1e-20, y_shift)
         cos_phi = jnp.cos(phi_g)
         sin_phi = jnp.sin(phi_g)
 
@@ -245,13 +247,17 @@ class MGE(object):
             MGE.pot_real_line_integrand,
             0, x_,
             args=(_p, q),
-            n=7
+            n=7,
+            segments=8,
+            log_L=3.0,
         )
         pot_on_imag_parallel = quad(
             MGE.pot_imag_line_integrand,
             0, y_,
             args=(x_, _p, q),
-            n=7
+            n=7,
+            segments=8,
+            log_L=3.0,
         )
         return factor * (pot_on_real_line - pot_on_imag_parallel)
 
@@ -286,8 +292,8 @@ class MGE(object):
         # rotate back to the original frame
         f_x = alpha_x_ * cos_phi - alpha_y_ * sin_phi
         f_y = alpha_x_ * sin_phi + alpha_y_ * cos_phi
-        return jnp.stack([f_x, f_y])
-    
+        return jnp.stack([f_x, f_y]).squeeze()
+
     def derivatives(self, x, y, e1, e2, center_x=0, center_y=0, **kwargs):
         '''Deflection angles of the MGE
 

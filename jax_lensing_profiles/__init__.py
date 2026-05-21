@@ -7,6 +7,7 @@ from . import Utility
 __version__ = "1.2.0"
 
 
+
 # Register the new mass and light profiles with herculens on import
 
 from herculens.LightModel import light_model_base
