@@ -16,12 +16,22 @@ __author__ = "ajshajib", "CKrawczyk", "astroskylee", "WolfgangEnzi"
 import jax
 import jax.numpy as jnp
 import herculens.Util.param_util as param_util
+import warnings
 
 from jax_lensing_profiles.Utility.basic_quad_jax import (
     log_segmented_nth_order_quad_base as quad,
 )
 from jax_lensing_profiles.Utility.faddeeva_function import w_f
 from functools import partial
+
+
+if jax.config.__getattribute__('jax_enable_x64'):
+    # 64 bit mode
+    N_TERMS = 28
+else:
+    # 32 bit mode
+    warnings.warn('Jax is currently in 32 bit mode, some profiles will not be as accurate as expected.')
+    N_TERMS = 13
 
 
 class MGE(object):
@@ -32,7 +42,7 @@ class MGE(object):
         sigma_start_mult=1/100,
         sigma_end_mult=20.0,
         n_gauss=20,
-        n_terms=28,
+        n_terms=N_TERMS,
         three_d=False
     ):
         '''Create a Multi-Gaussian Expansion for a radial convergence function

@@ -20,6 +20,7 @@ While these profiles were originally designed for use with [Herculens](https://g
 - `CuspyNFW_ellipse_kappa.CuspyNFWEllipseKappa`: Elliptical cuspy NFW convergence profile [`CUSPY_NFW_ELLIPSE_KAPPA`]
 - `CuspyHalo_ellipse_kappa.CuspyNFWEllipseKappa`: Elliptical cuspy halo convergence profile [`CUSPY_HALO_ELLIPSE_KAPPA`]
 - `Sersic_ellipse_kappa.SersicEllipseKappa`: Elliptical Sersic convergence profile [`SERSIC_ELLIPSE_KAPPA`]
+- `dPIE_from_MGE.dPIEEllipseKappa`: dPIE profile use MGEs [`DPIE_MGE`]
 
 ## Installation
 
@@ -31,9 +32,12 @@ pip install .
 
 ## Usage
 
-All the included light and mass profiles are registered with Herculens on import
+All the included light and mass profiles are registered with Herculens on import.  For more accurate results please use 64-bit precision for Jax.
 
 ```python
+import jax
+jax.config.update('jax_enable_x64', True)
+
 import herculens
 import jax_lensing_profiles
 

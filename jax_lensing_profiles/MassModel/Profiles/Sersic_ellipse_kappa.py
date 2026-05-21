@@ -6,7 +6,7 @@ __author__ = "CKrawczyk"
 
 import jax.numpy as jnp
 
-from .MGE import MGE
+from .MGE import MGE, N_TERMS
 
 
 def sersic_constant(sersic_index):
@@ -55,7 +55,7 @@ class SersicEllipseKappa(MGE):
             sersic_fn,
             'effective_radius',
             n_gauss=20,
-            n_terms=28,
+            n_terms=N_TERMS,
             sigma_start_mult=1/100,
             sigma_end_mult=20
         )
